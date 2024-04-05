@@ -1,5 +1,7 @@
+import auth from "@react-native-firebase/auth";
 import React, { useState } from "react";
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -10,6 +12,33 @@ import {
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleRegisterPress = async () => {
+    if (email && password) {
+      try {
+        const userCredential = await auth().createUserWithEmailAndPassword(
+          email,
+          password
+        );
+
+        console.log(userCredential);
+      } catch (error) {
+        console.log(error);
+        if (error.code === "auth/email-already-in-use") {
+          return Alert.alert("This email address is already in use!");
+        }
+
+        if (error.code === "auth/invalid-email") {
+          return Alert.alert("This email address is invalid!");
+        }
+
+        Alert.alert(error.message);
+      }
+    } else {
+      Alert.alert("Email and Password are required");
+    }
+  };
+
   const onPressLogin = () => {
     navigation.navigate("login");
   };
@@ -24,10 +53,14 @@ export default function RegisterScreen({ navigation }) {
       <TextInput
         placeholder="Password"
         onChangeText={setPassword}
+        secureTextEntry={true}
         style={styles.input}
       />
 
-      <TouchableOpacity style={styles.registerBtn}>
+      <TouchableOpacity
+        onPress={handleRegisterPress}
+        style={styles.registerBtn}
+      >
         <Text style={{ color: "white", fontWeight: "700" }}>Register</Text>
       </TouchableOpacity>
 
@@ -61,6 +94,7 @@ const styles = StyleSheet.create({
   registerBtn: {
     backgroundColor: "#ff7d00",
     padding: 12,
+    marginTop: 20,
     borderRadius: 8,
     alignItems: "center",
   },

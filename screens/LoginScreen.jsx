@@ -1,5 +1,7 @@
+import auth from "@react-native-firebase/auth";
 import React, { useState } from "react";
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -10,6 +12,28 @@ import {
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleLoginPress = async () => {
+    if (email && password) {
+      try {
+        const userCredential = await auth().signInWithEmailAndPassword(
+          email,
+          password
+        );
+
+        console.log(userCredential);
+      } catch (error) {
+        console.log(error);
+        if (error.code === "auth/invalid-email") {
+          return Alert.alert("This email address is invalid!");
+        }
+        Alert.alert(error.message);
+      }
+    } else {
+      Alert.alert("Email and Password are required");
+    }
+  };
+
   const onPressSignUp = () => {
     navigation.navigate("register");
   };
@@ -24,10 +48,11 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         placeholder="Password"
         onChangeText={setPassword}
+        secureTextEntry={true}
         style={styles.input}
       />
 
-      <TouchableOpacity style={styles.loginBtn}>
+      <TouchableOpacity onPress={handleLoginPress} style={styles.loginBtn}>
         <Text style={{ color: "white", fontWeight: "700" }}>Login</Text>
       </TouchableOpacity>
 
@@ -61,6 +86,7 @@ const styles = StyleSheet.create({
   loginBtn: {
     backgroundColor: "#ff7d00",
     padding: 12,
+    marginTop: 20,
     borderRadius: 8,
     alignItems: "center",
   },
