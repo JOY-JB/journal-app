@@ -35,7 +35,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   const onPressSignUp = () => {
-    navigation.navigate("register");
+    navigation.navigate("Register");
   };
 
   return (

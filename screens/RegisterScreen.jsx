@@ -40,7 +40,7 @@ export default function RegisterScreen({ navigation }) {
   };
 
   const onPressLogin = () => {
-    navigation.navigate("login");
+    navigation.navigate("Login");
   };
 
   return (
